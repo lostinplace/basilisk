@@ -5,7 +5,8 @@ CMakeCache.txt
 .DS_Store
 dist/
 dist3/
-.pytest_cache 
+.pytest_cache
+build/
 docs/html
 docs/build
 docs/source/Documentation/*

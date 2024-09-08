@@ -151,27 +151,59 @@ class BuildDocsCommand(Command):
         print("Building documentation")
         runCommand("make html", "docs/source")
 
+
 package_dir = "dist3"
 
 f = open('docs/source/bskVersion.txt', 'r')
 bskVersion = f.read().strip()
 
+
+def generate_manifest(root_dir, manifest_file):
+    """
+  Walks through all folders recursively and generates a MANIFEST.in file
+  with wildcards to include .pyd files.
+
+  Args:
+      root_dir (str): The root directory to start walking from.
+      manifest_file (str): The filename for the generated MANIFEST.in file.
+  """
+    with open(manifest_file, 'w') as f:
+        for root, _, files in os.walk(root_dir):
+            for filename in files:
+                if filename.endswith('.pyd'):
+                    # Include the file with a wildcard for potential subdirectories
+                    line = f"include dist3/Basilisk/{os.path.join(root, filename)[len(root_dir) + 1:]}\n"
+                    f.write(line)
+
+
+root_dir = 'dist3/Basilisk'
+manifest_file = 'MANIFEST.in'
+
+generate_manifest(root_dir, manifest_file)
+
+print(f"Generated MANIFEST.in file: {manifest_file}")
+
 setup(
     name='Basilisk',
     version=bskVersion,
     description="Astrodynamics Simulation Library",
-    packages=['Basilisk', ],
+    packages=["Basilisk"],
+    package_dir={'': "dist3"},
     license=open('./LICENSE').read(),
     long_description=open('./README.md').read(),
+    include_package_data=True,
     url='https://hanspeterschaub.info/basilisk/',
-    package_dir={'': package_dir},
-    # install_requires=[
-    #     'matplotlib',
-    #     'numpy',
-    #     'pandas'
-    # ],
+    install_requires=[
+        'setuptools>=70.1.0',
+        'matplotlib',
+        'numpy',
+        'pandas',
+        'tqdm',
+        'colorama',
+        'mpld3',
+    ],
     setup_requires=['pytest-runner'],
-    tests_require=['pytest', 'flake8'],
+    tests_require=['pytest', 'flake8', dask[]],
     cmdclass={
         'clean': CleanCommand,
         'xcode': XCodeBuildCommand,

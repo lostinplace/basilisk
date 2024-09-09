@@ -9,25 +9,25 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /basilisk
 
 # Install system dependencies
-RUN apt-get update
-
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y \
     build-essential \
     git \
-    swig \
     python3-dev \
     python3-tk \
     python3-venv \
-    python3-setuptools
-
-RUN rm -rf /var/lib/apt/lists/*
+    python3-setuptools \
+    wget \
+    automake \
+    bison \
+    libpcre3-dev \
+    libpcre2-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Clone Basilisk repository
 RUN git clone https://github.com/AVSLab/basilisk.git .
 
-# Create and activate virtual environment
+# Create virtual environment
 RUN python3 -m venv venv
-
 
 # Copy setup script
 COPY setup.sh /basilisk/setup.sh
